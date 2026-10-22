@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MR TECH PREMIUM - Loja Oficial de Aplicativos Android</title>
+  
+  <!-- SEO & Social Meta Tags -->
+  <meta name="description" content="Baixe os melhores aplicativos Android na MR TECH PREMIUM com link direto para download rápido e seguro de arquivos APK.">
+  <meta name="theme-color" content="#070a12">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="assets/logo.jpg">
+  
+  <!-- Google Fonts & Stylesheet -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ========================================================================
+       CONTEÚDO PRINCIPAL DA LOJA (VITRINE)
+       ======================================================================== -->
+  <div id="mainStoreContent">
+    
+    <!-- HEADER -->
+    <header class="header">
+      <div class="container header-inner">
+        <a class="brand-wrapper" href="index.html">
+          <img class="brand-logo" src="assets/logo.jpg" alt="MR TECH PREMIUM">
+          <div class="brand-info">
+            <h1 class="store-name-text">MR TECH PREMIUM</h1>
+            <span class="brand-badge">Download Direto APK</span>
+          </div>
+        </a>
+
+        <div class="header-actions">
+          <!-- Campo de Busca Rápida -->
+          <div class="tv-code-search" style="padding: 2px 8px 2px 14px;">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: #64748b; margin-right: 4px;">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input type="text" id="searchInput" placeholder="Pesquisar aplicativo..." style="width: 170px;">
+          </div>
+
+          <!-- Botão Painel do Administrador -->
+          <button type="button" class="btn-admin" id="btnOpenAdmin">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            Painel Admin
+          </button>
+        </div>
+      </div>
+    </header>
+
+
+    <!-- BARRA DE STATUS / CONTAGEM -->
+    <section class="controls-section" style="padding: 2rem 0 0.8rem;">
+      <div class="container">
+        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.8rem;">
+          <h3 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: #fff;">
+            Aplicativos Disponíveis
+          </h3>
+          <div class="apps-count-info" id="appsCount">
+            Carregando catálogo...
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GRADE DE APLICATIVOS -->
+    <section>
+      <div class="container">
+        <div class="apps-grid" id="appsGrid">
+          <!-- Cards gerados dinamicamente via app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="container footer-inner">
+        <div class="brand-wrapper" style="gap: 0.6rem;">
+          <img src="assets/logo.jpg" alt="MR TECH" style="width: 32px; height: 32px; border-radius: 8px;">
+          <div class="footer-text">
+            <strong>MR TECH PREMIUM</strong> &copy; 2026. Todos os direitos reservados.
+          </div>
+        </div>
+
+        <div class="footer-links">
+          <a href="#" id="btnSupport" target="_blank" class="footer-link" style="display: flex; align-items: center; gap: 6px; color: var(--accent-green);">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+            </svg>
+            Suporte WhatsApp
+          </a>
+          <a href="#" class="footer-link" onclick="openAdminModal(); return false;">Área do Administrador</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ========================================================================
+       MODAL 1: DOWNLOAD DIRETO, LINK DO APK & QR CODE
+       ======================================================================== -->
+  <div class="modal-overlay" id="downloadModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>
+          <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: var(--primary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          Download do Aplicativo
+        </h3>
+        <button type="button" class="btn-close-modal btn-close-download-modal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        
+        <!-- Detalhes do App -->
+        <div class="download-app-preview">
+          <img id="modalAppIcon" src="assets/logo.jpg" alt="Icon">
+          <div>
+            <h4 id="modalAppName">Nome do App</h4>
+            <div class="download-badges">
+              <span class="badge-tag" id="modalAppVersion">v1.0</span>
+              <span class="badge-tag" id="modalAppSize">15 MB</span>
+              <span class="badge-tag" style="background: rgba(16, 185, 129, 0.1); color: var(--accent-green); border-color: rgba(16, 185, 129, 0.3);">APK Direto</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOTÃO DE DOWNLOAD DIRETO -->
+        <div style="margin-bottom: 1.5rem;">
+          <a id="modalBtnDirectDownload" href="#" class="btn-main-download" download target="_blank">
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            BAIXAR ARQUIVO APK
+          </a>
+        </div>
+
+        <!-- LINK DIRETO DO APK COM COPIAR -->
+        <div class="shortlink-container">
+          <div class="shortlink-label">
+            <span>Link Direto do APK:</span>
+          </div>
+          <div class="shortlink-input-group">
+            <input type="text" id="modalDirectLink" readonly>
+            <button type="button" class="btn-copy" id="btnCopyDirectLink">
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              Copiar Link
+            </button>
+          </div>
+        </div>
+
+        <!-- QR CODE PARA CELULAR -->
+        <div class="qr-section">
+          <div class="qr-box" id="modalQrCode">
+            <!-- Gerado via QRCode.js -->
+          </div>
+          <div class="qr-info">
+            <h5>Escanear pelo Celular</h5>
+            <p>Aponte a câmera do seu celular para este QR Code para iniciar o download do arquivo APK diretamente no seu aparelho.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 2: PAINEL DO ADMINISTRADOR
+       ======================================================================== -->
+  <div class="modal-overlay" id="adminModal">
+    <div class="modal-card modal-card-admin">
+      <div class="modal-header">
+        <h3>
+          <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: var(--secondary);">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          Painel do Administrador - MR TECH PREMIUM
+        </h3>
+        <button type="button" class="btn-close-modal btn-close-admin-modal">✕</button>
+      </div>
+
+      <!-- TELA DE LOGIN DO ADMIN -->
+      <div id="adminLoginScreen" style="padding: 3rem 2rem; text-align: center; max-width: 380px; margin: 0 auto;">
+        <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; color: var(--secondary);">
+          <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+        </div>
+        <h4 style="font-size: 1.3rem; margin-bottom: 0.5rem; color: #fff;">Acesso Restrito</h4>
+        <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 1.8rem;">
+          Digite o PIN do Administrador para gerenciar aplicativos.
+        </p>
+
+        <form id="adminLoginForm">
+          <div style="margin-bottom: 1.2rem;">
+            <input type="password" id="adminPinInput" class="form-control" placeholder="Digite o PIN (Padrão: 1234)" style="text-align: center; font-size: 1.2rem; letter-spacing: 4px; font-family: var(--font-mono);" required>
+          </div>
+          <button type="submit" class="btn-download-primary" style="width: 100%; padding: 12px;">
+            Entrar no Painel
+          </button>
+        </form>
+        <div style="margin-top: 1rem; font-size: 0.75rem; color: #64748b;">
+          PIN Padrão: <strong>1234</strong>
+        </div>
+      </div>
+
+      <!-- DASHBOARD DO ADMIN (Após Login) -->
+      <div id="adminDashboardScreen" style="display: none;">
+        
+        <!-- Abas de Navegação -->
+        <div class="admin-tabs">
+          <button type="button" class="admin-tab-btn active" data-tab="tabAppsList">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+            </svg>
+            Aplicativos Cadastrados
+          </button>
+          <button type="button" class="admin-tab-btn" data-tab="tabNewApp">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Cadastrar Aplicativo
+          </button>
+          <button type="button" class="admin-tab-btn" data-tab="tabSettings">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            </svg>
+            Configurações & Backup
+          </button>
+          <button type="button" class="admin-tab-btn" id="btnAdminLogout" style="margin-left: auto; color: #ef4444;">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            Sair
+          </button>
+        </div>
+
+        <div class="modal-body">
+          
+          <!-- ABA 1: LISTAGEM DE APPS -->
+          <div id="tabAppsList" class="admin-tab-content active">
+            
+            <!-- Cards de Estatísticas -->
+            <div class="admin-stats-grid" style="grid-template-columns: 1fr 1fr;">
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                </div>
+                <div class="stat-info">
+                  <h6>Total de Aplicativos</h6>
+                  <div class="stat-number" id="statTotalApps">0</div>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--accent-green);">
+                  <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                </div>
+                <div class="stat-info">
+                  <h6>Downloads Realizados</h6>
+                  <div class="stat-number" id="statTotalDownloads">0</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tabela de Apps -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+              <h4 style="color: #fff; font-size: 1.05rem;">Aplicativos Cadastrados</h4>
+              <button type="button" class="btn-download-primary" style="padding: 8px 16px; font-size: 0.82rem;" onclick="switchAdminTab('tabNewApp')">
+                + Adicionar Novo App
+              </button>
+            </div>
+
+            <div class="admin-table-container">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Aplicativo</th>
+                    <th>Link Direto do APK</th>
+                    <th>Downloads</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="adminAppsTableBody">
+                  <!-- Gerado via admin.js -->
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+
+          <!-- ABA 2: CADASTRO / EDIÇÃO DE APLICATIVO -->
+          <div id="tabNewApp" class="admin-tab-content">
+            <h4 id="formAppTitle" style="color: #fff; font-size: 1.15rem; margin-bottom: 1.2rem;">Adicionar Novo Aplicativo</h4>
+
+            <form id="adminAppForm" class="admin-form">
+              
+              <!-- Nome do App -->
+              <div class="form-group form-group-full">
+                <label for="formAppName">Nome do Aplicativo *</label>
+                <input type="text" id="formAppName" class="form-control" placeholder="Ex: MR Player Pro, CineTech TV..." required>
+              </div>
+
+              <!-- Versão -->
+              <div class="form-group">
+                <label for="formAppVersion">Versão do Aplicativo</label>
+                <input type="text" id="formAppVersion" class="form-control" placeholder="Ex: v3.2.0">
+              </div>
+
+              <!-- Tamanho -->
+              <div class="form-group">
+                <label for="formAppSize">Tamanho do Arquivo</label>
+                <input type="text" id="formAppSize" class="form-control" placeholder="Ex: 18.5 MB">
+              </div>
+
+              <!-- URL Direta do APK -->
+              <div class="form-group form-group-full">
+                <label for="formAppApkUrl">Link Direto do Arquivo APK (Download) *</label>
+                <input type="url" id="formAppApkUrl" class="form-control" placeholder="Ex: https://meusite.com/arquivos/app.apk" required>
+                <small style="font-size: 0.72rem; color: #64748b; margin-top: 2px;">Insira o link direto de download onde o arquivo .apk está hospedado.</small>
+              </div>
+
+              <!-- Ícone / Imagem -->
+              <div class="form-group form-group-full">
+                <label>Ícone / Logo do Aplicativo</label>
+                <div class="icon-input-options">
+                  <div class="icon-preview-box">
+                    <img id="previewIconImg" class="icon-preview-img" src="assets/logo.jpg" alt="Preview">
+                    <div style="flex: 1;">
+                      <label style="font-size: 0.78rem; color: #94a3b8; display: block; margin-bottom: 4px;">Carregar imagem do seu aparelho:</label>
+                      <input type="file" id="formAppIconFile" accept="image/*" style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 8px;">
+                      <input type="text" id="formAppIconUrl" class="form-control" placeholder="Ou cole o link direto da imagem (https://...)">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Descrição -->
+              <div class="form-group form-group-full">
+                <label for="formAppDesc">Descrição do Aplicativo</label>
+                <textarea id="formAppDesc" class="form-control" placeholder="Descreva os recursos do aplicativo..."></textarea>
+              </div>
+
+              <!-- Checkbox Destaque -->
+              <div class="form-group form-group-full">
+                <label class="checkbox-toggle">
+                  <input type="checkbox" id="formAppFeatured">
+                  <span>Colocar este aplicativo em <strong>DESTAQUE</strong> na vitrine</span>
+                </label>
+              </div>
+
+              <!-- Botões de Salvar / Cancelar -->
+              <div class="form-group form-group-full" style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <button type="submit" class="btn-main-download" style="flex: 1; padding: 12px;">
+                  Salvar Aplicativo
+                </button>
+                <button type="button" class="btn-admin" id="btnCancelAppEdit" style="padding: 12px 20px;">
+                  Cancelar
+                </button>
+              </div>
+
+            </form>
+          </div>
+
+          <!-- ABA 3: CONFIGURAÇÕES & BACKUP -->
+          <div id="tabSettings" class="admin-tab-content">
+            <h4 style="color: #fff; font-size: 1.15rem; margin-bottom: 1.2rem;">Configurações da Loja & Segurança</h4>
+
+            <form id="adminSettingsForm" class="admin-form" style="margin-bottom: 2.5rem;">
+              
+              <div class="form-group">
+                <label for="settingStoreName">Nome da Loja</label>
+                <input type="text" id="settingStoreName" class="form-control" value="MR TECH PREMIUM">
+              </div>
+
+              <div class="form-group">
+                <label for="settingStoreSlogan">Slogan / Subtítulo</label>
+                <input type="text" id="settingStoreSlogan" class="form-control" value="Central Oficial de Aplicativos Android - Download Direto">
+              </div>
+
+              <div class="form-group">
+                <label for="settingSupportPhone">WhatsApp de Suporte (com DDD)</label>
+                <input type="text" id="settingSupportPhone" class="form-control" placeholder="Ex: 5511999999999">
+              </div>
+
+              <div class="form-group">
+                <label for="settingNewPin">Alterar Senha / PIN do Admin</label>
+                <input type="password" id="settingNewPin" class="form-control" placeholder="Digite novo PIN (mínimo 4 dígitos)">
+              </div>
+
+              <div class="form-group form-group-full">
+                <label for="settingSupportMessage">Mensagem Padrão do WhatsApp</label>
+                <input type="text" id="settingSupportMessage" class="form-control" value="Olá! Vim através da loja MR TECH PREMIUM e gostaria de suporte.">
+              </div>
+
+              <div class="form-group form-group-full">
+                <button type="submit" class="btn-download-primary" style="padding: 12px 24px; width: fit-content;">
+                  Salvar Configurações
+                </button>
+              </div>
+            </form>
+
+            <div style="border-top: 1px solid var(--border-subtle); padding-top: 1.8rem;">
+              <h4 style="color: #fff; font-size: 1.1rem; margin-bottom: 0.8rem;">Backup & Restauração de Dados</h4>
+              <p style="font-size: 0.82rem; color: #94a3b8; margin-bottom: 1.2rem;">
+                Exporte todo o catálogo de aplicativos em um arquivo JSON para guardar ou migrar a qualquer momento.
+              </p>
+
+              <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+                <button type="button" class="btn-copy" id="btnExportBackup" style="background: rgba(0, 242, 254, 0.1); border-color: rgba(0, 242, 254, 0.3); color: var(--primary);">
+                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  Exportar Backup (JSON)
+                </button>
+
+                <button type="button" class="btn-copy" id="btnImportBackupTrigger">
+                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                  </svg>
+                  Importar Backup (JSON)
+                </button>
+                <input type="file" id="inputImportBackup" accept=".json" style="display: none;">
+
+                <button type="button" class="btn-copy" id="btnRestoreDefaults" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">
+                  Restaurar Padrões de Fábrica
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="js/qrcode.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

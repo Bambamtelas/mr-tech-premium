@@ -1,0 +1,19 @@
+{
+  "name": "mr-tech-premium",
+  "version": "1.0.0",
+  "description": "MR TECH PREMIUM - Loja Oficial de Aplicativos para Android & TV Box",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve -l 3000",
+    "dev": "npx serve -l 3000"
+  },
+  "keywords": [
+    "android",
+    "tv-box",
+    "android-tv",
+    "apk-store",
+    "downloader"
+  ],
+  "author": "MR TECH PREMIUM",
+  "license": "MIT"
+}
