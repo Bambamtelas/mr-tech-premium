@@ -108,13 +108,16 @@ const StoreDB = {
    */
   getApps() {
     if (this._cachedApps && this._cachedApps.length > 0) {
-      return this._cachedApps;
+      return this._cachedApps.filter(a => a.id !== '__settings__');
     }
     try {
       const data = localStorage.getItem(STORAGE_KEY);
       if (data) {
-        this._cachedApps = JSON.parse(data);
-        return this._cachedApps;
+        const parsed = JSON.parse(data);
+        if (Array.isArray(parsed)) {
+          this._cachedApps = parsed.filter(a => a.id !== '__settings__');
+          return this._cachedApps;
+        }
       }
     } catch (e) {
       console.warn("Erro ao ler localStorage:", e);
@@ -128,16 +131,16 @@ const StoreDB = {
    * Salva a lista de apps no LocalStorage
    */
   saveApps(apps) {
-    this._cachedApps = apps;
+    this._cachedApps = Array.isArray(apps) ? apps.filter(a => a.id !== '__settings__') : [];
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(apps));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this._cachedApps));
     } catch (e) {
       console.error("Erro ao salvar no localStorage:", e);
     }
   },
 
   /**
-   * Sincroniza aplicativos com o Supabase
+   * Sincroniza aplicativos e configurações com o Supabase
    */
   async fetchFromSupabase() {
     try {
@@ -151,7 +154,26 @@ const StoreDB = {
       if (response.ok) {
         const rows = await response.json();
         if (Array.isArray(rows) && rows.length > 0) {
-          const apps = rows.map(mapFromDb);
+          // Extrai e atualiza configurações da loja se salvas na nuvem
+          const settingsRow = rows.find(r => r.id === '__settings__');
+          if (settingsRow && settingsRow.description) {
+            try {
+              const cloudSettings = JSON.parse(settingsRow.description);
+              if (cloudSettings && typeof cloudSettings === 'object') {
+                const currentLocal = this.getSettings();
+                const merged = { ...currentLocal, ...cloudSettings };
+                try {
+                  localStorage.setItem(SETTINGS_KEY, JSON.stringify(merged));
+                } catch (e) {}
+              }
+            } catch (e) {
+              console.warn("Erro ao analisar configurações da nuvem:", e);
+            }
+          }
+
+          // Filtra apenas aplicativos reais (exclui o registro de configurações)
+          const appRows = rows.filter(r => r.id !== '__settings__');
+          const apps = appRows.map(mapFromDb);
           this.saveApps(apps);
           return apps;
         }
@@ -270,13 +292,41 @@ const StoreDB = {
   },
 
   /**
-   * Salva as configurações da loja
+   * Salva as configurações da loja localmente e sincroniza na nuvem
    */
-  saveSettings(settings) {
+  async saveSettings(settings) {
     try {
       localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
     } catch (e) {
       console.error("Erro ao salvar configurações:", e);
+    }
+
+    // Sincroniza em tempo real com o Supabase para persistir em todos os dispositivos
+    try {
+      const payload = {
+        id: '__settings__',
+        name: '__settings__',
+        version: '1.0',
+        size: '0',
+        apk_url: '',
+        icon: '',
+        description: JSON.stringify(settings),
+        featured: false,
+        downloads: 0
+      };
+
+      await fetch(`${SUPABASE_CONFIG.url}/rest/v1/mr_tech_apps`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_CONFIG.key,
+          'Authorization': `Bearer ${SUPABASE_CONFIG.key}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'resolution=merge-duplicates'
+        },
+        body: JSON.stringify(payload)
+      });
+    } catch (err) {
+      console.warn("Erro ao sincronizar configurações na nuvem:", err);
     }
   },
 
@@ -284,7 +334,7 @@ const StoreDB = {
    * Busca um app pelo ID ou Nome
    */
   getAppById(id) {
-    if (!id) return null;
+    if (!id || id === '__settings__') return null;
     const clean = String(id).trim().toLowerCase();
     const apps = this.getApps();
     return apps.find(app => String(app.id).toLowerCase() === clean || app.name.toLowerCase() === clean) || null;

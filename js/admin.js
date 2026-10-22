@@ -65,6 +65,7 @@ async function showAdminDashboard() {
   await StoreDB.fetchFromSupabase();
   renderAdminAppsTable();
   updateAdminStats();
+  loadSettingsInForm();
 }
 
 /**
@@ -282,41 +283,56 @@ async function saveAppFromForm(e) {
  */
 function loadSettingsInForm() {
   const settings = StoreDB.getSettings();
-  document.getElementById('settingStoreName').value = settings.storeName || 'MR TECH PREMIUM';
-  document.getElementById('settingStoreSlogan').value = settings.storeSlogan || '';
-  document.getElementById('settingSupportPhone').value = settings.supportPhone || '';
-  document.getElementById('settingSupportMessage').value = settings.supportMessage || '';
+  const nameEl = document.getElementById('settingStoreName');
+  if (nameEl) nameEl.value = settings.storeName || 'MR TECH PREMIUM';
+
+  const sloganEl = document.getElementById('settingStoreSlogan');
+  if (sloganEl) sloganEl.value = settings.storeSlogan || '';
+
+  const phoneEl = document.getElementById('settingSupportPhone');
+  if (phoneEl) phoneEl.value = settings.supportPhone || '';
+
+  const msgEl = document.getElementById('settingSupportMessage');
+  if (msgEl) msgEl.value = settings.supportMessage || '';
+
+  const pinEl = document.getElementById('settingNewPin');
+  if (pinEl) {
+    pinEl.value = settings.adminPin || '1234';
+  }
+
+  const pinStatus = document.getElementById('pinStatusText');
+  if (pinStatus) {
+    const masked = '•'.repeat((settings.adminPin || '1234').length);
+    pinStatus.innerHTML = `🔒 PIN atual configurado: <strong style="color: #38bdf8; letter-spacing: 2px;">${masked}</strong> (clique no olho para ver ou digite um novo e clique em Salvar)`;
+  }
 }
 
 /**
  * Salva as configurações da loja
  */
-function saveStoreSettings(e) {
+async function saveStoreSettings(e) {
   e.preventDefault();
   const current = StoreDB.getSettings();
 
-  const newPin = document.getElementById('settingNewPin').value.trim();
-  const updated = {
-    ...current,
-    storeName: document.getElementById('settingStoreName').value.trim() || 'MR TECH PREMIUM',
-    storeSlogan: document.getElementById('settingStoreSlogan').value.trim(),
-    supportPhone: document.getElementById('settingSupportPhone').value.trim(),
-    supportMessage: document.getElementById('settingSupportMessage').value.trim()
-  };
-
-  if (newPin) {
-    if (newPin.length < 4) {
-      showToast('O PIN deve ter pelo menos 4 dígitos!', 'error');
-      return;
-    }
-    updated.adminPin = newPin;
-    document.getElementById('settingNewPin').value = '';
-    showToast('PIN do Administrador atualizado!', 'success');
+  const newPin = (document.getElementById('settingNewPin')?.value || '').trim();
+  if (newPin && newPin.length < 4) {
+    showToast('O PIN deve ter pelo menos 4 dígitos!', 'error');
+    return;
   }
 
-  StoreDB.saveSettings(updated);
+  const updated = {
+    ...current,
+    storeName: document.getElementById('settingStoreName')?.value.trim() || 'MR TECH PREMIUM',
+    storeSlogan: document.getElementById('settingStoreSlogan')?.value.trim() || '',
+    supportPhone: document.getElementById('settingSupportPhone')?.value.trim() || '',
+    supportMessage: document.getElementById('settingSupportMessage')?.value.trim() || '',
+    adminPin: newPin || current.adminPin || '1234'
+  };
+
+  await StoreDB.saveSettings(updated);
+  loadSettingsInForm();
   initStore();
-  showToast('Configurações salvas com sucesso!', 'success');
+  showToast('Configurações e Senha salvas com sucesso!', 'success');
 }
 
 /**
@@ -377,8 +393,9 @@ function setupAdminListeners() {
       e.preventDefault();
       const enteredPin = document.getElementById('adminPinInput').value.trim();
       const settings = StoreDB.getSettings();
+      const expectedPin = String(settings.adminPin || '1234').trim();
 
-      if (enteredPin === settings.adminPin || enteredPin === '1234') {
+      if (enteredPin === expectedPin) {
         isAdminAuthenticated = true;
         sessionStorage.setItem('mr_tech_admin_auth', 'true');
         showAdminDashboard();
@@ -386,6 +403,28 @@ function setupAdminListeners() {
       } else {
         showToast('PIN incorreto.', 'error');
       }
+    });
+  }
+
+  // Alternar visualização de senha no Login
+  const btnToggleLoginPin = document.getElementById('btnToggleLoginPinVisibility');
+  const loginPinInput = document.getElementById('adminPinInput');
+  if (btnToggleLoginPin && loginPinInput) {
+    btnToggleLoginPin.addEventListener('click', () => {
+      const isPass = loginPinInput.type === 'password';
+      loginPinInput.type = isPass ? 'text' : 'password';
+      btnToggleLoginPin.style.color = isPass ? 'var(--primary)' : '#94a3b8';
+    });
+  }
+
+  // Alternar visualização de senha nas Configurações
+  const btnToggleSettingPin = document.getElementById('btnToggleSettingPinVisibility');
+  const settingPinInput = document.getElementById('settingNewPin');
+  if (btnToggleSettingPin && settingPinInput) {
+    btnToggleSettingPin.addEventListener('click', () => {
+      const isPass = settingPinInput.type === 'password';
+      settingPinInput.type = isPass ? 'text' : 'password';
+      btnToggleSettingPin.style.color = isPass ? 'var(--primary)' : '#94a3b8';
     });
   }
 

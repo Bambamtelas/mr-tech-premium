@@ -14,8 +14,7 @@ Uma plataforma moderna, ultrarrápida e elegante desenvolvida sob medida para di
 
 ### 2. 📺 Sistema de Códigos Curtos & Download para TV
 - **Código Curto em Destaque**: Cada aplicativo possui um código curto exclusivo (ex: `101`, `102`) pensado especialmente para ser digitado facilmente com o **controle remoto da TV** no aplicativo **Downloader** (AFTVnews).
-- **Link Curto Facilitado**: Link simplificado gerado automaticamente com botão de cópia em 1 clique (`https://seusite.com/?d=101` ou `baixar.html?c=101`).
-- **QR Code Instantâneo**: QR Code nítido para escanear com a câmera do celular e baixar o APK na hora.
+- **Link Direto Facilitado**: Link simplificado gerado automaticamente com botão de cópia em 1 clique.
 - **Tela Dedicada para TV (`baixar.html`)**: Tela com contagem regressiva de 3 segundos que inicia o download automaticamente na Android TV.
 
 ### 3. 🛠️ Painel do Administrador (Área Restrita)
@@ -55,7 +54,6 @@ loja de app/
 ├── css/
 │   └── style.css       # Design System completo, responsivo e temas neon
 └── js/
-    ├── qrcode.min.js   # Biblioteca local para geração de QR Code offline
     ├── data.js         # Banco de dados local (LocalStorage) e catálogo inicial
     ├── app.js          # Lógica da vitrine, busca por código e modais
     └── admin.js        # Lógica do painel do administrador e uploads

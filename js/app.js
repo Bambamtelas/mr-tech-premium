@@ -4,7 +4,6 @@
  */
 
 let currentApps = [];
-let qrInstance = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   initStore();
@@ -37,6 +36,14 @@ function initStore() {
     if (apps && apps.length > 0) {
       currentApps = apps;
       renderApps();
+    }
+    const updatedSettings = StoreDB.getSettings();
+    document.querySelectorAll('.store-name-text').forEach(el => el.textContent = updatedSettings.storeName);
+    document.querySelectorAll('.store-slogan-text').forEach(el => el.textContent = updatedSettings.storeSlogan);
+    if (supportBtn && updatedSettings.supportPhone) {
+      const cleanPhone = updatedSettings.supportPhone.replace(/\D/g, '');
+      const msg = encodeURIComponent(updatedSettings.supportMessage || 'Olá! Gostaria de ajuda na loja.');
+      supportBtn.href = `https://wa.me/${cleanPhone}?text=${msg}`;
     }
   });
 }
@@ -182,36 +189,7 @@ function openDownloadModal(appId) {
     });
   };
 
-  // Gera o QR Code com o link direto do APK
-  generateQrCode(app.apkUrl);
-
   modal.classList.add('active');
-}
-
-/**
- * Gera QR Code de alta precisão
- */
-function generateQrCode(text) {
-  const qrBox = document.getElementById('modalQrCode');
-  if (!qrBox) return;
-
-  qrBox.innerHTML = '';
-  try {
-    if (typeof QRCode !== 'undefined') {
-      qrInstance = new QRCode(qrBox, {
-        text: text,
-        width: 110,
-        height: 110,
-        colorDark: "#090d16",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.M
-      });
-    } else {
-      qrBox.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${encodeURIComponent(text)}" alt="QR Code" style="width:100%;height:100%;border-radius:6px;">`;
-    }
-  } catch (e) {
-    console.error("Erro ao gerar QR Code:", e);
-  }
 }
 
 /**
