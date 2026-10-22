@@ -52,7 +52,7 @@ function showAdminLogin() {
 /**
  * Exibe a tela do dashboard após autenticação
  */
-function showAdminDashboard() {
+async function showAdminDashboard() {
   document.getElementById('adminLoginScreen').style.display = 'none';
   document.getElementById('adminDashboardScreen').style.display = 'block';
   
@@ -60,6 +60,11 @@ function showAdminDashboard() {
   updateAdminStats();
   loadSettingsInForm();
   switchAdminTab('tabAppsList');
+
+  // Sincroniza em tempo real com o banco de dados Supabase
+  await StoreDB.fetchFromSupabase();
+  renderAdminAppsTable();
+  updateAdminStats();
 }
 
 /**
@@ -169,11 +174,11 @@ function renderAdminAppsTable() {
   });
 
   tbody.querySelectorAll('.btn-delete-app').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       const id = btn.getAttribute('data-id');
       const app = StoreDB.getApps().find(a => a.id === id);
       if (confirm(`Tem certeza que deseja excluir o aplicativo "${app?.name || id}"?`)) {
-        StoreDB.deleteApp(id);
+        await StoreDB.deleteApp(id);
         renderAdminAppsTable();
         updateAdminStats();
         initStore();
@@ -236,7 +241,7 @@ function resetAppForm() {
 /**
  * Salva o aplicativo (Novo ou Edição)
  */
-function saveAppFromForm(e) {
+async function saveAppFromForm(e) {
   e.preventDefault();
 
   const name = document.getElementById('formAppName').value.trim();
@@ -264,7 +269,8 @@ function saveAppFromForm(e) {
     featured: document.getElementById('formAppFeatured').checked
   };
 
-  StoreDB.upsertApp(appData);
+  showToast('Salvando aplicativo na nuvem...', 'info');
+  await StoreDB.upsertApp(appData);
   resetAppForm();
   switchAdminTab('tabAppsList');
   initStore();

@@ -31,6 +31,14 @@ function initStore() {
   }
 
   renderApps();
+
+  // Sincroniza em segundo plano com o Supabase
+  StoreDB.fetchFromSupabase().then(apps => {
+    if (apps && apps.length > 0) {
+      currentApps = apps;
+      renderApps();
+    }
+  });
 }
 
 /**

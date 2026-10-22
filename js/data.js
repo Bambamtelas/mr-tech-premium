@@ -1,12 +1,17 @@
 /**
- * MR TECH PREMIUM - DATA & STORAGE MODULE
- * Gerenciador de Aplicativos com Links Diretos de Download
+ * MR TECH PREMIUM - DATA & STORAGE MODULE (COM SUPABASE)
+ * Gerenciador de Aplicativos com Sincronização em Nuvem em Tempo Real
  */
+
+const SUPABASE_CONFIG = {
+  url: 'https://fzawwpylvourxxcjwdzu.supabase.co',
+  key: 'sb_publishable_X-DaRHahbiDK_y_uaxLHSQ_hvrrF-1s'
+};
 
 const STORAGE_KEY = 'mr_tech_apps_db_v2';
 const SETTINGS_KEY = 'mr_tech_settings_db_v2';
 
-// Dados Padrão Iniciais da Loja (Sem categorias e sem códigos de Downloader)
+// Dados Padrão Iniciais da Loja (Fallback offline)
 const DEFAULT_APPS = [
   {
     id: "1",
@@ -66,19 +71,55 @@ const DEFAULT_SETTINGS = {
   supportMessage: "Olá, vim através da loja MR TECH PREMIUM e gostaria de suporte/ativação."
 };
 
+function mapFromDb(row) {
+  return {
+    id: String(row.id),
+    name: row.name,
+    version: row.version || 'v1.0',
+    size: row.size || 'APK',
+    apkUrl: row.apk_url || row.apkUrl || '',
+    icon: row.icon || 'assets/logo.jpg',
+    description: row.description || '',
+    featured: !!row.featured,
+    downloads: Number(row.downloads) || 0,
+    createdAt: row.created_at || row.createdAt || new Date().toISOString()
+  };
+}
+
+function mapToDb(app) {
+  return {
+    id: String(app.id),
+    name: app.name,
+    version: app.version || 'v1.0',
+    size: app.size || 'APK',
+    apk_url: app.apkUrl || app.apk_url || '',
+    icon: app.icon || 'assets/logo.jpg',
+    description: app.description || '',
+    featured: !!app.featured,
+    downloads: Number(app.downloads) || 0
+  };
+}
+
 const StoreDB = {
+  _cachedApps: null,
+
   /**
-   * Obtém todos os apps salvos ou restaura os padrões
+   * Obtém apps do cache local ou defaults
    */
   getApps() {
+    if (this._cachedApps && this._cachedApps.length > 0) {
+      return this._cachedApps;
+    }
     try {
       const data = localStorage.getItem(STORAGE_KEY);
       if (data) {
-        return JSON.parse(data);
+        this._cachedApps = JSON.parse(data);
+        return this._cachedApps;
       }
     } catch (e) {
       console.warn("Erro ao ler localStorage:", e);
     }
+    this._cachedApps = DEFAULT_APPS;
     this.saveApps(DEFAULT_APPS);
     return DEFAULT_APPS;
   },
@@ -87,10 +128,128 @@ const StoreDB = {
    * Salva a lista de apps no LocalStorage
    */
   saveApps(apps) {
+    this._cachedApps = apps;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(apps));
     } catch (e) {
       console.error("Erro ao salvar no localStorage:", e);
+    }
+  },
+
+  /**
+   * Sincroniza aplicativos com o Supabase
+   */
+  async fetchFromSupabase() {
+    try {
+      const response = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/mr_tech_apps?select=*&order=created_at.desc`, {
+        headers: {
+          'apikey': SUPABASE_CONFIG.key,
+          'Authorization': `Bearer ${SUPABASE_CONFIG.key}`
+        }
+      });
+
+      if (response.ok) {
+        const rows = await response.json();
+        if (Array.isArray(rows) && rows.length > 0) {
+          const apps = rows.map(mapFromDb);
+          this.saveApps(apps);
+          return apps;
+        }
+      }
+    } catch (err) {
+      console.warn("Erro ao sincronizar com Supabase (usando cache local):", err);
+    }
+    return this.getApps();
+  },
+
+  /**
+   * Adiciona ou atualiza um aplicativo no Supabase e no Cache
+   */
+  async upsertApp(appData) {
+    const id = appData.id || String(Date.now()).slice(-5);
+    const fullApp = {
+      ...appData,
+      id,
+      downloads: appData.downloads || 0,
+      createdAt: appData.createdAt || new Date().toISOString()
+    };
+
+    // Atualiza cache local instantaneamente
+    const apps = this.getApps();
+    const existingIndex = apps.findIndex(a => a.id === fullApp.id);
+    if (existingIndex >= 0) {
+      apps[existingIndex] = { ...apps[existingIndex], ...fullApp, updatedAt: new Date().toISOString() };
+    } else {
+      apps.unshift(fullApp);
+    }
+    this.saveApps(apps);
+
+    // Envia para o Supabase
+    try {
+      const dbRow = mapToDb(fullApp);
+      await fetch(`${SUPABASE_CONFIG.url}/rest/v1/mr_tech_apps`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_CONFIG.key,
+          'Authorization': `Bearer ${SUPABASE_CONFIG.key}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'resolution=merge-duplicates'
+        },
+        body: JSON.stringify(dbRow)
+      });
+    } catch (err) {
+      console.error("Erro ao sincronizar upsert com Supabase:", err);
+    }
+
+    return true;
+  },
+
+  /**
+   * Remove um aplicativo pelo ID no Supabase e no Cache
+   */
+  async deleteApp(id) {
+    let apps = this.getApps();
+    apps = apps.filter(a => a.id !== id);
+    this.saveApps(apps);
+
+    try {
+      await fetch(`${SUPABASE_CONFIG.url}/rest/v1/mr_tech_apps?id=eq.${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        headers: {
+          'apikey': SUPABASE_CONFIG.key,
+          'Authorization': `Bearer ${SUPABASE_CONFIG.key}`
+        }
+      });
+    } catch (err) {
+      console.error("Erro ao sincronizar delete com Supabase:", err);
+    }
+
+    return true;
+  },
+
+  /**
+   * Incrementa contagem de download
+   */
+  async incrementDownload(id) {
+    const apps = this.getApps();
+    const app = apps.find(a => a.id === id);
+    if (app) {
+      app.downloads = (app.downloads || 0) + 1;
+      this.saveApps(apps);
+
+      try {
+        await fetch(`${SUPABASE_CONFIG.url}/rest/v1/mr_tech_apps?id=eq.${encodeURIComponent(id)}`, {
+          method: 'PATCH',
+          headers: {
+            'apikey': SUPABASE_CONFIG.key,
+            'Authorization': `Bearer ${SUPABASE_CONFIG.key}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ downloads: app.downloads })
+        });
+      } catch (e) {
+        // silencioso
+      }
     }
   },
 
@@ -132,52 +291,6 @@ const StoreDB = {
   },
 
   /**
-   * Adiciona ou atualiza um aplicativo
-   */
-  upsertApp(appData) {
-    const apps = this.getApps();
-    const existingIndex = apps.findIndex(a => a.id === appData.id);
-
-    if (existingIndex >= 0) {
-      apps[existingIndex] = { ...apps[existingIndex], ...appData, updatedAt: new Date().toISOString() };
-    } else {
-      const id = appData.id || String(Date.now()).slice(-5);
-      const newApp = {
-        ...appData,
-        id,
-        downloads: appData.downloads || 0,
-        createdAt: new Date().toISOString()
-      };
-      apps.unshift(newApp);
-    }
-
-    this.saveApps(apps);
-    return true;
-  },
-
-  /**
-   * Remove um aplicativo pelo ID
-   */
-  deleteApp(id) {
-    let apps = this.getApps();
-    apps = apps.filter(a => a.id !== id);
-    this.saveApps(apps);
-    return true;
-  },
-
-  /**
-   * Incrementa contagem de download
-   */
-  incrementDownload(id) {
-    const apps = this.getApps();
-    const app = apps.find(a => a.id === id);
-    if (app) {
-      app.downloads = (app.downloads || 0) + 1;
-      this.saveApps(apps);
-    }
-  },
-
-  /**
    * Exporta todo o banco de dados como JSON
    */
   exportDatabase() {
@@ -198,6 +311,8 @@ const StoreDB = {
       const parsed = JSON.parse(jsonString);
       if (parsed.apps && Array.isArray(parsed.apps)) {
         this.saveApps(parsed.apps);
+        // Sincroniza em lote com Supabase
+        parsed.apps.forEach(app => this.upsertApp(app));
       }
       if (parsed.settings && typeof parsed.settings === 'object') {
         this.saveSettings(parsed.settings);
